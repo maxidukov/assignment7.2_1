@@ -30,9 +30,8 @@ struct Atomizer {
     Atomizer operator-=(const int& num) { return Atomizer(count.fetch_sub(num)); }
 
     void store(const int& num) { return count.store(num); }
-    Atomizer load() { return Atomizer(count.load()); }
+    std::atomic<int> load() { return count.load(); }
 
-    std::atomic<int> release() { return count.load(); };
 };
 
 Atomizer num(0);
@@ -43,8 +42,8 @@ void fincr(){
         //while(num < MAXNUM){
         //std::this_thread::sleep_for(1000ms);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        if(num.release().load() < MAXNUM){ //CAN THIS COMPARISON BE ATOMIC?
-            std::cout << "Number of clients increased from " << num.release().load() << " to " << num.release().load()+2 << "\n"; //THIS HAS TO BE LOCKED TO BE THREAD-SAFE
+        if(num.load() < MAXNUM){ //CAN THIS COMPARISON BE ATOMIC?
+            std::cout << "Number of clients increased from " << num.load() << " to " << num.load()+2 << "\n"; //THIS HAS TO BE LOCKED TO BE THREAD-SAFE
             num += 2;
         }
     }
@@ -55,8 +54,8 @@ void fdecr(){
         //while(num > 0){
         //std::this_thread::sleep_for(2000ms);
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        if(num.release().load() > 0){    //CAN THIS COMPARISON BE ATOMIC?
-            std::cout << "Number of clients decreased from " << num.release().load() << " to " << num.release().load()-1 << "\n"; //THIS HAS TO BE LOCKED TO BE THREAD-SAFE
+        if(num.load() > 0){    //CAN THIS COMPARISON BE ATOMIC?
+            std::cout << "Number of clients decreased from " << num.load() << " to " << num.load()-1 << "\n"; //THIS HAS TO BE LOCKED TO BE THREAD-SAFE
             num--;
         }
     }
