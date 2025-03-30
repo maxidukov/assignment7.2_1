@@ -6,6 +6,12 @@
 #define MAXNUM 1000
 //const int MAXNUM = 10;
 // std::atomic<int> num(0);
+using std::memory_order::seq_cst;
+// using std::memory_order::relaxed;
+// using std::memory_order::consume;
+// using std::memory_order::acquire;
+// using std::memory_order::release;
+// using std::memory_order::acq_rel;
 
 std::string thrid_tostring(std::thread::id thrid ){
     std::stringstream ss;
